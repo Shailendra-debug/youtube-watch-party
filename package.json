@@ -1,0 +1,29 @@
+{
+  "name": "youtube-watch-party",
+  "version": "1.0.0",
+  "description": "Full-Stack Real-Time YouTube Watch Party with WebSockets, PostgreSQL, and Role-Based Access Control",
+  "main": "backend/src/index.js",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start": "node backend/src/index.js",
+    "build:frontend": "cd frontend && npm run build",
+    "build": "npm run build:frontend",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm run install:backend && npm run install:frontend"
+  },
+  "keywords": [
+    "youtube",
+    "watch-party",
+    "websockets",
+    "socket.io",
+    "react",
+    "express",
+    "postgresql",
+    "nodejs",
+    "rbac"
+  ],
+  "author": "",
+  "license": "MIT"
+}
