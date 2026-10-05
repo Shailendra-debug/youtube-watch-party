@@ -5,7 +5,7 @@ Standalone backend server for the YouTube Watch Party system.
 ## 📦 Features
 - **Express REST API**: Health checks (`/api/health`) and room info endpoints (`/api/rooms/:roomId`).
 - **Socket.IO Real-Time Server**: Low-latency WebSocket bidirectional communication.
-- **Role-Based Access Control (RBAC)**: Backend permission validation for Host, Moderator, and Participant.
+- **Role-Based Access Control (RBAC)**: Backend permission validation for Host, Moderator, Participant, and read-only Viewer roles.
 - **PostgreSQL Persistence**: Automatic table creation and asynchronous state synchronization using the cloud Render PostgreSQL database.
 - **OOP Architecture**: Modular `Room`, `Participant`, and `RoomManager` models.
 

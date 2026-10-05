@@ -14,7 +14,8 @@ import {
   Copy,
   RotateCcw,
   Power,
-  LogIn
+  LogIn,
+  Eye
 } from 'lucide-react';
 
 import Lobby from './components/Lobby';
@@ -534,6 +535,7 @@ function WatchPartyMain() {
 
   // Participant Request Action
   const handleRequestAction = (requestData) => {
+    if (userRole === 'viewer') return;
     if (socket) {
       socket.emit('request_action', requestData);
       showToast('Request submitted to Host!');
@@ -552,12 +554,14 @@ function WatchPartyMain() {
 
   // Chat & Reaction Callbacks
   const handleSendMessage = (text) => {
+    if (userRole === 'viewer') return;
     if (socket) {
       socket.emit('chat_message', { text });
     }
   };
 
   const handleSendReaction = (emoji) => {
+    if (userRole === 'viewer') return;
     if (socket) {
       socket.emit('send_reaction', { emoji });
     }
@@ -573,6 +577,7 @@ function WatchPartyMain() {
   };
 
   const isHost = userRole === 'host';
+  const isViewer = userRole === 'viewer';
   const canControl = userRole === 'host' || userRole === 'moderator';
 
   // If not joined in a room yet, render Lobby
@@ -623,7 +628,7 @@ function WatchPartyMain() {
 
       {/* Request Action Modal for Participants */}
       <RequestActionModal
-        isOpen={isRequestModalOpen}
+        isOpen={isRequestModalOpen && !isViewer}
         onClose={() => setIsRequestModalOpen(false)}
         onSubmitRequest={handleRequestAction}
       />
@@ -666,6 +671,10 @@ function WatchPartyMain() {
             ) : userRole === 'moderator' ? (
               <span className="flex items-center gap-1 text-indigo-400 font-semibold">
                 <Shield className="w-3.5 h-3.5 fill-indigo-400" /> Moderator
+              </span>
+            ) : isViewer ? (
+              <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                <Eye className="w-3.5 h-3.5" /> Viewer
               </span>
             ) : (
               <span className="flex items-center gap-1 text-slate-400 font-medium">
@@ -732,6 +741,7 @@ function WatchPartyMain() {
             syncState={syncState}
             canControl={canControl}
             userRole={userRole}
+            canRequestControl={!isViewer}
             onPlay={handlePlay}
             onPause={handlePause}
             onSeek={handleSeek}
@@ -739,12 +749,14 @@ function WatchPartyMain() {
           />
 
           {/* Video Change Bar */}
-          <ChangeVideoBar
-            currentVideoId={syncState?.videoId || 'jfKfPfyJRdk'}
-            canControl={canControl}
-            onChangeVideo={handleChangeVideo}
-            onRequestVideoChange={(vid) => handleRequestAction({ action: 'change_video', videoId: vid })}
-          />
+          {!isViewer && (
+            <ChangeVideoBar
+              currentVideoId={syncState?.videoId || 'jfKfPfyJRdk'}
+              canControl={canControl}
+              onChangeVideo={handleChangeVideo}
+              onRequestVideoChange={(vid) => handleRequestAction({ action: 'change_video', videoId: vid })}
+            />
+          )}
         </section>
 
         {/* Right Column: Participants List & Live Chat */}
@@ -791,6 +803,7 @@ function WatchPartyMain() {
                 currentUserId={userId}
                 onSendMessage={handleSendMessage}
                 onSendReaction={handleSendReaction}
+                readOnly={isViewer}
               />
             </div>
           </div>

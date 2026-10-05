@@ -120,7 +120,8 @@ Rooms feature strict role-based permissions enforced by the backend:
 | :--- | :--- | :--- |
 | 👑 **Host** | Auto-assigned to room creator | **Full Control**: Play, pause, seek, change video, assign roles (promote/demote), kick participants, transfer host ownership. |
 | 🛡️ **Moderator** | Assigned by Host | **Playback Control**: Play, pause, seek, change video. Cannot kick participants or assign roles. |
-| 👤 **Participant / Viewer** | Default for joiners | **Watch Only**: Cannot control playback directly. Can submit action/video requests for Host/Mod approval. |
+| 👤 **Participant** | Default for joiners | **Guest Access**: Watches the room, chats, reacts, and can request playback actions from the Host/Moderator. |
+| 👁️ **Viewer** | Assigned by Host | **Read Only**: Sees the synchronized video, participant list, and chat, but cannot control playback, chat, react, or submit requests. |
 ---
 ## ⚡ WebSocket Events Specification
 | Event | Direction | Payload | Description | Role Required |
@@ -139,8 +140,8 @@ Rooms feature strict role-based permissions enforced by the backend:
 | `user_left` | Server ➔ Clients | `{ username, userId, participants }` | Participant departure notification | Broadcast |
 | `role_assigned`| Server ➔ Clients| `{ userId, username, role, participants }` | Role change notification | Broadcast |
 | `participant_removed`| Server ➔ Clients| `{ userId, username, participants }` | Kicked user notification | Broadcast |
-| `chat_message`| Both | `{ text }` / `{ id, senderId, senderName, senderRole, text, timestamp }` | Real-time text chat | Anyone |
-| `send_reaction`| Client ➔ Server | `{ emoji }` | Broadcast animated floating reaction | Anyone |
+| `chat_message`| Both | `{ text }` / `{ id, senderId, senderName, senderRole, text, timestamp }` | Real-time text chat | Host / Moderator / Participant |
+| `send_reaction`| Client ➔ Server | `{ emoji }` | Broadcast animated floating reaction | Host / Moderator / Participant |
 | `request_action`| Client ➔ Server | `{ action, videoId }` | Participant requests playback action or video change | Participant |
 | `approve_request`| Client ➔ Server | `{ requestId }` | Host/Moderator executes participant request | **Host / Moderator** |
 ---

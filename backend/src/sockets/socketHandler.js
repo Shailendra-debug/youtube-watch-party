@@ -369,8 +369,8 @@ export function setupSocketHandlers(io) {
           return;
         }
 
-        if (![ROLES.MODERATOR, ROLES.PARTICIPANT].includes(role)) {
-          socket.emit('error_message', { message: 'Choose Moderator or Participant for this role change.' });
+        if (![ROLES.MODERATOR, ROLES.PARTICIPANT, ROLES.VIEWER].includes(role)) {
+          socket.emit('error_message', { message: 'Choose Moderator, Participant, or Viewer for this role change.' });
           return;
         }
 
@@ -496,6 +496,10 @@ export function setupSocketHandlers(io) {
       try {
         const { room, participant } = getSocketContext();
         if (!room || !participant || !text || !text.trim()) return;
+        if (!participant.canInteract()) {
+          socket.emit('permission_denied', { action: 'chat_message', message: 'Viewer access is read-only.' });
+          return;
+        }
 
         const message = room.addChatMessage({
           senderId: participant.id,
@@ -518,6 +522,10 @@ export function setupSocketHandlers(io) {
     socket.on('send_reaction', ({ emoji }) => {
       const { room, participant } = getSocketContext();
       if (!room || !participant || !emoji) return;
+      if (!participant.canInteract()) {
+        socket.emit('permission_denied', { action: 'send_reaction', message: 'Viewer access is read-only.' });
+        return;
+      }
 
       io.to(room.id).emit('receive_reaction', {
         id: `react_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
@@ -535,6 +543,10 @@ export function setupSocketHandlers(io) {
     socket.on('request_action', ({ action, videoId }) => {
       const { room, participant } = getSocketContext();
       if (!room || !participant) return;
+      if (!participant.canInteract()) {
+        socket.emit('permission_denied', { action: 'request_action', message: 'Viewer access is read-only.' });
+        return;
+      }
 
       const request = room.addControlRequest(participant.id, action, videoId);
       if (!request) return;

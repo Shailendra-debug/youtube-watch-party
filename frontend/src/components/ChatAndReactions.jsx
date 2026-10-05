@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, MessageSquare, Flame, Heart, Smile, Sparkles } from 'lucide-react';
+import { Send, MessageSquare, Sparkles, Eye } from 'lucide-react';
 
 const EMOJI_LIST = ['🔥', '❤️', '😂', '👏', '🍿', '😮', '🚀', '🎉'];
 
@@ -8,7 +8,8 @@ export default function ChatAndReactions({
   reactions = [],
   currentUserId,
   onSendMessage,
-  onSendReaction
+  onSendReaction,
+  readOnly = false
 }) {
   const [inputText, setInputText] = useState('');
   const chatBottomRef = useRef(null);
@@ -118,41 +119,49 @@ export default function ChatAndReactions({
         <div ref={chatBottomRef} />
       </div>
 
-      {/* Quick Emoji Reaction Bar */}
-      <div className="px-3 py-1.5 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between gap-1 overflow-x-auto">
-        <span className="text-[11px] text-slate-500 font-medium shrink-0 ml-1">React:</span>
-        <div className="flex items-center gap-1">
-          {EMOJI_LIST.map((emoji) => (
-            <button
-              key={emoji}
-              onClick={() => onSendReaction(emoji)}
-              className="text-lg p-1 hover:bg-slate-800 rounded-lg hover:scale-125 active:scale-95 transition cursor-pointer"
-              title={`React with ${emoji}`}
-            >
-              {emoji}
-            </button>
-          ))}
+      {readOnly ? (
+        <div className="p-3 border-t border-slate-800 bg-slate-950/60 flex items-center justify-center gap-2 text-xs text-emerald-300">
+          <Eye className="w-3.5 h-3.5" /> Viewer access · chat is read-only
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Quick Emoji Reaction Bar */}
+          <div className="px-3 py-1.5 bg-slate-950/60 border-t border-slate-800/80 flex items-center justify-between gap-1 overflow-x-auto">
+            <span className="text-[11px] text-slate-500 font-medium shrink-0 ml-1">React:</span>
+            <div className="flex items-center gap-1">
+              {EMOJI_LIST.map((emoji) => (
+                <button
+                  key={emoji}
+                  onClick={() => onSendReaction(emoji)}
+                  className="text-lg p-1 hover:bg-slate-800 rounded-lg hover:scale-125 active:scale-95 transition cursor-pointer"
+                  title={`React with ${emoji}`}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </div>
 
-      {/* Input Form */}
-      <form onSubmit={handleSubmit} className="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
-        <input
-          type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="Send a message..."
-          maxLength={300}
-          className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 transition"
-        />
-        <button
-          type="submit"
-          disabled={!inputText.trim()}
-          className="px-3.5 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:hover:bg-rose-600 text-white rounded-xl transition flex items-center justify-center cursor-pointer"
-        >
-          <Send className="w-4 h-4" />
-        </button>
-      </form>
+          {/* Input Form */}
+          <form onSubmit={handleSubmit} className="p-3 bg-slate-900 border-t border-slate-800 flex gap-2">
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Send a message..."
+              maxLength={300}
+              className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-rose-500 transition"
+            />
+            <button
+              type="submit"
+              disabled={!inputText.trim()}
+              className="px-3.5 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:hover:bg-rose-600 text-white rounded-xl transition flex items-center justify-center cursor-pointer"
+            >
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
+        </>
+      )}
     </div>
   );
 }

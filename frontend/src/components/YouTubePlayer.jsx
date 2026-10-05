@@ -21,7 +21,8 @@ export default function YouTubePlayer({
   onPlay,
   onPause,
   onSeek,
-  onRequestControl
+  onRequestControl,
+  canRequestControl = true
 }) {
   const containerRef = useRef(null);
   const playerMountRef = useRef(null);
@@ -331,15 +332,17 @@ export default function YouTubePlayer({
       {!canControl && (
         <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700/50 text-xs font-medium text-slate-300 shadow-lg">
           <Lock className="w-3.5 h-3.5 text-amber-400" />
-          <span>Synced with Host ({userRole})</span>
-          <button
-            onClick={onRequestControl}
-            className="ml-2 px-2 py-0.5 bg-rose-600/80 hover:bg-rose-600 text-white rounded text-[11px] font-semibold transition flex items-center gap-1 cursor-pointer"
-            title="Request Host to allow playback control"
-          >
-            <HandMetal className="w-3 h-3" />
-            Request Action
-          </button>
+          <span>{userRole === 'viewer' ? 'Viewer mode · watching together' : 'Synced with Host'}</span>
+          {canRequestControl && (
+            <button
+              onClick={onRequestControl}
+              className="ml-2 px-2 py-0.5 bg-rose-600/80 hover:bg-rose-600 text-white rounded text-[11px] font-semibold transition flex items-center gap-1 cursor-pointer"
+              title="Request Host to allow playback control"
+            >
+              <HandMetal className="w-3 h-3" />
+              Request Action
+            </button>
+          )}
         </div>
       )}
 

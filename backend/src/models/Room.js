@@ -141,7 +141,9 @@ export class Room {
         }
       }
       if (!nextHost) {
-        nextHost = Array.from(this.participants.values()).find(p => p.accountId) || null;
+        nextHost = Array.from(this.participants.values()).find(
+          p => p.accountId && p.role !== ROLES.VIEWER
+        ) || null;
       }
 
       if (nextHost) {

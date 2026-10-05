@@ -8,7 +8,7 @@ export const ROLES = {
   HOST: 'host',
   MODERATOR: 'moderator',
   PARTICIPANT: 'participant',
-  VIEWER: 'viewer' // Alias for participant
+  VIEWER: 'viewer'
 };
 
 export class Participant {
@@ -42,6 +42,22 @@ export class Participant {
    */
   isModerator() {
     return this.role === ROLES.MODERATOR;
+  }
+
+  /**
+   * Checks if this member has read-only Viewer access.
+   * @returns {boolean}
+   */
+  isViewer() {
+    return this.role === ROLES.VIEWER;
+  }
+
+  /**
+   * Viewers can watch room state but cannot send chat, reactions, or requests.
+   * @returns {boolean}
+   */
+  canInteract() {
+    return !this.isViewer();
   }
 
   /**

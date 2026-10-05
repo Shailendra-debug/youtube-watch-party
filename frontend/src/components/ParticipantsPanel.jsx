@@ -3,12 +3,10 @@ import {
   Crown, 
   Shield, 
   User, 
-  MoreVertical, 
   UserMinus, 
-  ArrowUpRight, 
-  ShieldCheck, 
-  ShieldAlert,
-  Users
+  ArrowUpRight,
+  Users,
+  Eye
 } from 'lucide-react';
 
 export default function ParticipantsPanel({
@@ -38,6 +36,7 @@ export default function ParticipantsPanel({
           const isCurrentUser = p.userId === currentUserId;
           const isUserHost = p.role === 'host';
           const isUserMod = p.role === 'moderator';
+          const isUserViewer = p.role === 'viewer';
 
           return (
             <div
@@ -56,6 +55,8 @@ export default function ParticipantsPanel({
                       ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                       : isUserMod
                       ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/40'
+                      : isUserViewer
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
                       : 'bg-slate-700 text-slate-300'
                   }`}
                 >
@@ -86,7 +87,12 @@ export default function ParticipantsPanel({
                         <Shield className="w-3 h-3 fill-indigo-400" /> Moderator
                       </span>
                     )}
-                    {!isUserHost && !isUserMod && (
+                    {isUserViewer && (
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400 font-semibold">
+                        <Eye className="w-3 h-3" /> Viewer
+                      </span>
+                    )}
+                    {!isUserHost && !isUserMod && !isUserViewer && (
                       <span className="inline-flex items-center gap-1 text-[11px] text-slate-400">
                         <User className="w-3 h-3" /> Participant
                       </span>
@@ -98,24 +104,17 @@ export default function ParticipantsPanel({
               {/* Host Actions Dropdown/Menu for other participants */}
               {isHost && !isCurrentUser && (
                 <div className="flex items-center gap-1">
-                  {/* Role Toggle Button */}
-                  {isUserMod ? (
-                    <button
-                      onClick={() => onAssignRole(p.userId, 'participant')}
-                      className="p-1.5 text-slate-400 hover:text-amber-400 hover:bg-slate-700/60 rounded-lg transition"
-                      title="Demote to Participant"
-                    >
-                      <ShieldAlert className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => onAssignRole(p.userId, 'moderator')}
-                      className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-slate-700/60 rounded-lg transition"
-                      title="Promote to Moderator"
-                    >
-                      <ShieldCheck className="w-4 h-4" />
-                    </button>
-                  )}
+                  <select
+                    value={p.role}
+                    onChange={(event) => onAssignRole(p.userId, event.target.value)}
+                    aria-label={`Change ${p.username}'s role`}
+                    className="max-w-28 rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-[11px] text-slate-200 outline-none focus:border-rose-500"
+                    title="Change role"
+                  >
+                    <option value="participant">Participant</option>
+                    <option value="viewer">Viewer</option>
+                    <option value="moderator">Moderator</option>
+                  </select>
 
                   {/* Transfer Host */}
                   <button
