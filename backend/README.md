@@ -21,9 +21,4 @@ npm run dev
 npm start
 ```
 
-## ⚙️ Environment Variables (`.env`)
-```env
-PORT=5000
-DATABASE_URL=postgresql://you_tube_user:8CyczO1g4NwkzRCkF0GQ0UApEHwGSxCF@dpg-db16bprncjis73bd3bbg-a.oregon-postgres.render.com/you_tube
-CLIENT_URL=http://localhost:5173
 ```

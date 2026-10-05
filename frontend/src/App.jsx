@@ -26,9 +26,27 @@ import ChangeVideoBar from './components/ChangeVideoBar';
 import ApprovalRequestsBanner from './components/ApprovalRequestsBanner';
 import { KickedModal, RequestActionModal } from './components/Modals';
 
-// Connect to WebSocket server (uses proxy in dev or origin in production)
-const SOCKET_URL = import.meta.env.VITE_SERVER_URL || window.location.origin;
-const API_URL = (import.meta.env.VITE_SERVER_URL || window.location.origin).replace(/\/$/, '');
+// Use the current origin by default so a single Render service handles the UI,
+// API, and Socket.IO. Ignore loopback URLs in production; they only exist on
+// the developer's machine and are unreachable from deployed browsers.
+const configuredServerUrl = import.meta.env.VITE_SERVER_URL?.trim();
+const configuredServerIsLoopback = (() => {
+  if (!configuredServerUrl) return false;
+  try {
+    const hostname = new URL(configuredServerUrl, window.location.origin).hostname;
+    return hostname === 'localhost'
+      || hostname.endsWith('.localhost')
+      || /^127(?:\.\d{1,3}){3}$/.test(hostname)
+      || hostname === '[::1]';
+  } catch {
+    return false;
+  }
+})();
+const SERVER_URL = import.meta.env.PROD && configuredServerIsLoopback
+  ? window.location.origin
+  : configuredServerUrl || window.location.origin;
+const SOCKET_URL = SERVER_URL;
+const API_URL = SERVER_URL.replace(/\/$/, '');
 const AUTH_TOKEN_KEY = 'syncplay_host_token';
 const HOST_ROOM_KEY = 'syncplay_host_room';
 
